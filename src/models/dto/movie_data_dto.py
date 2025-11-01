@@ -32,6 +32,8 @@ class MovieDTO:
     Response: Optional[str] = None
     totalSeasons: Optional[str] = None
     Season: Optional[str] = None
+    Episode: Optional[str] = None
+    seriesID: Optional[str] = None
     Error: Optional[str] = None
 
 
@@ -52,6 +54,24 @@ class MovieDTO:
         data = asdict(self)
         if "Ratings" in data and data["Ratings"] is not None:
             data["Ratings"] = [
-                Rating(imdbID=data["imdbID"], **r) for r in data["Ratings"]
+                Rating(imdbID=data.get("imdbID", ""), **r) for r in data["Ratings"]
             ]
+        
+        # Ustaw wartości domyślne dla brakujących pól (Movie wymaga wszystkich pól jako str)
+        defaults = {
+            "Title": "", "Year": "", "Rated": "N/A", "Released": "N/A",
+            "Runtime": "N/A", "Genre": [], "Director": "N/A", "Writer": "N/A",
+            "Actors": [], "Plot": "N/A", "Language": "N/A", "Country": "N/A",
+            "Awards": "N/A", "Poster": "N/A", "Ratings": [], "Metascore": "N/A",
+            "imdbRating": "N/A", "imdbVotes": "N/A", "imdbID": "", "Type": "movie",
+            "DVD": "N/A", "BoxOffice": "N/A", "Production": "N/A", "Website": "N/A",
+            "Response": "False", "totalSeasons": "N/A", "Season": "N/A",
+            "Episode": "N/A", "seriesID": "", "Error": ""
+        }
+        
+        # Zastąp None wartościami domyślnymi
+        for key, default_value in defaults.items():
+            if data.get(key) is None:
+                data[key] = default_value
+        
         return Movie(**data)

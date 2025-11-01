@@ -37,4 +37,6 @@ class Movie:
     Response: str
     totalSeasons: str
     Season: str
-    Error:str
+    Episode: str
+    seriesID: str
+    Error: str

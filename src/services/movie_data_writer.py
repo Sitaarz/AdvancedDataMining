@@ -53,6 +53,8 @@ class MovieDataWriter(IMovieDataWriter):
             Response TEXT,
             totalSeasons TEXT,
             Season TEXT,
+            Episode TEXT,
+            seriesID TEXT,
             Error TEXT,
             FOREIGN KEY(Genre) REFERENCES genres(genre),
             FOREIGN KEY(Actors) REFERENCES actors(actor)       
