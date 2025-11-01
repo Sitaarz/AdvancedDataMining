@@ -36,4 +36,5 @@ class Movie:
     Website: str
     Response: str
     totalSeasons: str
+    Season: str
     Error:str
