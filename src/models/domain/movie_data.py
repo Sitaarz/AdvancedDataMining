@@ -35,5 +35,5 @@ class Movie:
     Production: str
     Website: str
     Response: str
+    totalSeasons: str
     Error:str
-    TotalSeasons: str

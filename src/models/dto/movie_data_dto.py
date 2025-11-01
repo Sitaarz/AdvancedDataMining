@@ -30,7 +30,7 @@ class MovieDTO:
     Production: Optional[str] = None
     Website: Optional[str] = None
     Response: Optional[str] = None
-    TotalSeasons: Optional[str] = None
+    totalSeasons: Optional[str] = None
     Error: Optional[str] = None
 
 
