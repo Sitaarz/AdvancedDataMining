@@ -6,9 +6,14 @@ from src.services.omdb_client import OmdbClient
 
 if __name__ == "__main__":
     AppSettings.load_settings("./config/appsettings.json")
-
     movie_logger = MovieLogger()
-    omdb_client = OmdbClient(AppSettings.api_key)
+
+    apiKey = AppSettings.api_key
+    if apiKey is None or apiKey == "":
+        movie_logger.log_error("API key is not set. Raising error.")
+        raise ValueError("API key is not set. Go to config/appsettings.json and set your API key.")
+
+    omdb_client = OmdbClient(apiKey)
 
     with MovieDataWriter() as movie_data_writer:
         try:
