@@ -28,7 +28,7 @@ class GetDataWrapper():
     def get_single_entity(self, movie_id: str) -> None:
         movie_response = self._omdb_client.get_film_by_id(movie_id)
         trials = 1
-        while trials < 3:
+        while True:
             if movie_response.status_code == 200:
                 movie_response_json = movie_response.json()
                 movie_response_json["imdbID"] = movie_id
@@ -44,8 +44,7 @@ class GetDataWrapper():
                 return
             trials += 1
             time.sleep(trials**2)
-        self._movie_logger.log_error("Connection with OMDB API failed. Terminationg download")
-        raise ConnectionError("Connection with OMDB API failed. Terminationg download")
+            self._movie_logger.log_error(f"Connection with OMDB API failed. Retrying in {trials**2} seconds.")
 
     def increase_omdb_movie_id(self, movie_id: str) -> str:
         if movie_id is None:
