@@ -84,15 +84,16 @@ class MovieDataWriter(IMovieDataWriter):
         placeholders = ', '.join(['?'] * len(movie_dict.keys()))
         values = tuple(movie_dict.values())
 
-        if len(movie.Genre) > 0 or len(movie.Actors) > 0:
+        if len(movie.Genre) > 0:
             for genre in movie.Genre:
-                self._cursor.execute("INSERT OR IGNORE INTO genres (genre) VALUES (?)", (genre,))
+                self._cursor.execute("INSERT OR IGNORE INTO genres (genre) VALUES (?)", (genre.strip(),))
                 for actor in movie.Actors:
-                    self._cursor.execute("INSERT OR IGNORE INTO actors (actor) VALUES (?)", (actor,))
+                    self._cursor.execute("INSERT OR IGNORE INTO actors (actor) VALUES (?)", (actor.strip(),))
                     self._cursor.execute(f"INSERT OR REPLACE INTO movies ({columns}, genre, actors) VALUES ({placeholders}, ?, ?)", values + (genre, actor))
+        else:
+            self._cursor.execute(f"INSERT OR REPLACE INTO movies ({columns}) VALUES ({placeholders})", values)
 
 
-        self._cursor.execute(f"INSERT OR REPLACE INTO movies ({columns}) VALUES ({placeholders})", values)
 
         ratings = movie.Ratings
         self._cursor.execute("DELETE FROM ratings WHERE imdbID=?", (movie.imdbID,))

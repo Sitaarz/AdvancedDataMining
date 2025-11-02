@@ -47,7 +47,7 @@ class TestGetDataWrapper(unittest.TestCase):
 
         self.mock_client.get_film_by_id.return_value = mock_response
 
-        self.wrapper.get_single_entity(movie_id)
+        self.wrapper.save_single_entity(movie_id)
 
         self.mock_writer.save_movie_entity.assert_called_once_with(mock_movie)
         self.mock_logger.log_info.assert_called_with(f"Movie with id {movie_id} saved successfully.")
@@ -68,7 +68,7 @@ class TestGetDataWrapper(unittest.TestCase):
 
         self.mock_client.get_film_by_id.return_value = mock_response
 
-        self.wrapper.get_single_entity(movie_id)
+        self.wrapper.save_single_entity(movie_id)
 
         self.mock_writer.save_movie_entity.assert_called_once_with(mock_movie)
         self.mock_logger.log_error.assert_called()  # Zostanie wywołany error log
@@ -81,7 +81,7 @@ class TestGetDataWrapper(unittest.TestCase):
         self.mock_client.get_film_by_id.return_value = mock_response
 
         with self.assertRaises(ConnectionError):
-            self.wrapper.get_single_entity(movie_id)
+            self.wrapper.save_single_entity(movie_id)
         self.mock_logger.log_error.assert_called_with("Connection with OMDB API failed. Terminationg download")
 
 

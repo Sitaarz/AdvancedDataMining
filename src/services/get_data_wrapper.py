@@ -1,3 +1,6 @@
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from requests import Response
+from threading import Lock
 import time
 
 from config.AppSettings import AppSettings
@@ -18,15 +21,27 @@ class GetDataWrapper():
 
     def get_data(self) -> None:
         latest_movie_id = self._movie_data_writer.get_latest_movie_id() if AppSettings.start_from_id is None else AppSettings.start_from_id
+
         while True:
-            if AppSettings.stop_at_id is not None and latest_movie_id == AppSettings.stop_at_id:
+            id_list = []
+
+            for i in range(AppSettings.batch_size):
+                if AppSettings.stop_at_id is not None and latest_movie_id > AppSettings.stop_at_id:
+                    break
+                id_list.append(latest_movie_id)
+                latest_movie_id = self.increase_omdb_movie_id(latest_movie_id)
+
+            if not id_list:
                 break
-            self.get_single_entity(latest_movie_id)
-            latest_movie_id = self.increase_omdb_movie_id(latest_movie_id)
+
+            with ThreadPoolExecutor() as executor:
+                responses = executor.map(lambda movie_id: self.get_responses(movie_id), id_list)
+
+            for imdb_id, response in list(zip(id_list, responses)):
+                self.save_single_entity(imdb_id, response)
 
 
-    def get_single_entity(self, movie_id: str) -> None:
-        movie_response = self._omdb_client.get_film_by_id(movie_id)
+    def save_single_entity(self, movie_id, movie_response: Response) -> None:
         trials = 1
         while True:
             if movie_response.status_code == 200:
@@ -43,8 +58,15 @@ class GetDataWrapper():
                     self._movie_logger.log_info(f"Movie with id {movie_domain.imdbID} saved successfully.")
                 return
             trials += 1
-            time.sleep(trials**2)
+
             self._movie_logger.log_error(f"Connection with OMDB API failed. Retrying in {trials**2} seconds.")
+            time.sleep(trials**2)
+
+            movie_response = self._omdb_client.get_film_by_id(movie_id)
+
+    def get_responses(self, imdb_id: str) -> list[Response]:
+        movie_response = self._omdb_client.get_film_by_id(imdb_id)
+        return movie_response
 
     def increase_omdb_movie_id(self, movie_id: str) -> str:
         if movie_id is None:
