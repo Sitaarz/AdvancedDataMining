@@ -21,4 +21,5 @@ if __name__ == "__main__":
             get_data_wrapper.get_data()
         except Exception as e:
             movie_logger.log_error("Program stopped. Exception appeared: " + str(e))
+            raise
 

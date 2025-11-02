@@ -4,6 +4,7 @@ class AppSettings:
     api_key = None
     start_from_id = None
     stop_at_id = None
+    batch_size = None
 
     @staticmethod
     def load_settings(path: str):
@@ -13,3 +14,4 @@ class AppSettings:
             AppSettings.api_key = data['apiKey'] if os.getenv('API_KEY') is None else os.getenv('API_KEY')
             AppSettings.start_from_id = data.get('startFromId') if os.getenv('START_FROM_ID') is None else os.getenv('START_FROM_ID')
             AppSettings.stop_at_id = data.get('stopAtId') if os.getenv('STOP_AT_ID') is None else os.getenv('STOP_AT_ID')
+            AppSettings.batch_size = data.get('batchSize') if os.getenv('BATCH_SIZE') is None else os.getenv('BATCH_SIZE')
