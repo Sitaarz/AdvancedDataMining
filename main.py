@@ -16,10 +16,11 @@ if __name__ == "__main__":
     omdb_client = OmdbClient(apiKey)
 
     with MovieDataWriter() as movie_data_writer:
-        try:
-            get_data_wrapper = GetDataWrapper(movie_data_writer, movie_logger, omdb_client)
-            get_data_wrapper.get_data()
-        except Exception as e:
-            movie_logger.log_error("Program stopped. Exception appeared: " + str(e))
-            raise
+        get_data_wrapper = GetDataWrapper(movie_data_writer, movie_logger, omdb_client)
+        while True:
+            trial_number = 1
+            try:
+                get_data_wrapper.get_data()
+            except Exception as e:
+                movie_logger.log_error("Exception appeared: " + str(e))
 
