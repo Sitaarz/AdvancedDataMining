@@ -45,7 +45,11 @@ class GetDataWrapper():
         trials = 1
         while True:
             if movie_response.status_code == 200:
-                movie_response_json = movie_response.json()
+                try:
+                    movie_response_json = movie_response.json()
+                except Exception:
+                    self._movie_logger.log_error(f"Error while parsing JSON from OMDB API. OMDBID: {movie_id} Response: {movie_response.text}")
+                    return
                 movie_response_json["imdbID"] = movie_id
                 movie_dto = MovieDTO.from_dict(movie_response_json)
                 movie_domain = movie_dto.to_domain()
