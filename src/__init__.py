@@ -1,5 +1,3 @@
-from src import interfaces
-from src import models
-from src import services
+from src.DataDownload import interfaces, models, services
 
 __all__ = ['interfaces', 'models', 'services']
