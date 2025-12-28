@@ -1,3 +1,5 @@
 *.db filter=lfs diff=lfs merge=lfs -text
 *.db binary
 *.sqlite binary
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.pt binary
